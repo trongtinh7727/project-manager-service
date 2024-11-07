@@ -1,32 +1,55 @@
-version: '3'
+version: "3.1"
+
 services:
+  # PostgreSQL Database
   db:
     image: postgres
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: project_manager
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
     ports:
       - "5432:5432"
-
-  phppgadmin:
-    image: dockage/phppgadmin
     environment:
-      - PHP_PG_ADMIN_SERVER=db
-      - PHP_PG_ADMIN_PORT=5432
-      - PHP_PG_ADMIN_DEFAULT_DB=project_manager
-      - PHP_PG_ADMIN_DEFAULT_USER=root
-      - PHP_PG_ADMIN_DEFAULT_PASSWORD=root
-    ports:
-      - "8888:80"
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: project-manager
+    networks:
+      - project-manager-network
+
+  # Admin tool for PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
     depends_on:
       - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8090:80"
+    networks:
+      - project-manager-network
 
-  # app:
-  #   build: .
-  #   environment:
-  #     DATABASE_URL: postgres://root:root@db:5432/project_manager_db
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - "3000:3000"
+  # Node.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: admin
+      DB_NAME: project-manager
+    depends_on:
+      - db
+    networks:
+      - project-manager-network
+
+networks:
+  project-manager-network:
+
+volumes:
+  db_data:
