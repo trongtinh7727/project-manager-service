@@ -29,7 +29,7 @@ const register = catchAsync(async (req, res) => {
   const newUser = await db.User.create({ email, username, password: hash });
   if (!newUser) {
     return res.status(400).json({
-      status: 'Fail',
+      status: 'Failed',
       data: 'User registration failed',
     });
   }
@@ -84,7 +84,7 @@ const login = catchAsync(async (req, res, next) => {
   const user = await db.User.findOne({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({
-      status: 'Fail',
+      status: 'Failed',
       data: 'Invalid email or password',
     });
   }
