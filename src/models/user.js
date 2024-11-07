@@ -15,6 +15,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    confirmToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    isConfirmed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    role: {
+      type: DataTypes.ENUM('free_user', 'premium_user'),
+      allowNull: false,
+      defaultValue: 'free_user',
+    },
   });
 
   User.associate = (models) => {
