@@ -1,0 +1,18 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: project_manager_db
+    ports:
+      - "5432:5432"
+  # app:
+  #   build: .
+  #   environment:
+  #     DATABASE_URL: postgres://root:root@db:5432/project_manager_db
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - "3000:3000"
