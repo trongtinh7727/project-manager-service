@@ -5,6 +5,9 @@ const router = express.Router();
 
 router.use(authentication);
 router.post('/create', workspaceController.createWorkspace);
-router.post('/:workspaceId/add-member', workspaceController.addMember);
+router.post('/:workspaceId/add-member', workspaceController.addMembers);
+
+router.get('/:workspaceId/users', workspaceController.getAllUsers);
+router.delete('/:workspaceId', workspaceController.deleteWorkspace);
 
 module.exports = router;

@@ -6,6 +6,7 @@ const AppError = require('../utils/AppError');
 const crypto = require('crypto');
 const sendEmail = require('../utils/email');
 const confirmEmailHTML = require('../templates/emailTemplate')
+const ResponseHandler = require('../utils/ResponseHandler');
 
 // Generate a JWT token
 const generateToken = (userId) => {
@@ -28,10 +29,7 @@ const register = catchAsync(async (req, res) => {
   // Create the new user
   const newUser = await db.User.create({ email, username, password: hash });
   if (!newUser) {
-    return res.status(400).json({
-      status: 'Failed',
-      data: 'User registration failed',
-    });
+    return ResponseHandler.error(res, 'User registration failed')
   }
 
   const confirmToken = crypto.randomBytes(32).toString('hex');
@@ -46,10 +44,7 @@ const register = catchAsync(async (req, res) => {
     content: confirmEmailHTML(confirmURL),
   });
 
-  return res.status(201).json({
-    status: 'Success',
-    data: 'User registered. Please check your email to confirm your account.',
-  });
+  return ResponseHandler.success(res, 'User registered. Please check your email to confirm your account.')
 });
 
 // Confirm email
@@ -65,10 +60,7 @@ const confirmEmail = catchAsync(async (req, res, next) => {
   user.confirmToken = null;
   await user.save();
 
-  res.status(200).json({
-    status: 'Success',
-    message: 'Email confirmed successfully!',
-  });
+  return ResponseHandler.success(res, 'Email confirmed successfully!')
 });
 
 // Login user
@@ -83,15 +75,12 @@ const login = catchAsync(async (req, res, next) => {
   // Find user by email
   const user = await db.User.findOne({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({
-      status: 'Failed',
-      data: 'Invalid email or password',
-    });
+    return ResponseHandler.error(res, 'Invalid email or password')
   }
 
   // Generate token and send response
   const token = generateToken(user.id);
-  res.json({ token });
+  return ResponseHandler.success(res, 'Login successfully!', token)
 });
 
 // Authentication middleware to verify the JWT token
@@ -131,4 +120,4 @@ const restrictTo = (...roles) => {
   };
 };
 
-module.exports = { register,confirmEmail, login, authentication, restrictTo };
+module.exports = { register, confirmEmail, login, authentication, restrictTo };

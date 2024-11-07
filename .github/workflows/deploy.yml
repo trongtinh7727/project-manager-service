@@ -25,4 +25,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd /home/tinhne/project-manager-service && git pull origin main
+            docker-compose down
             docker-compose up --build -d
+            npx sequelize-cli db:migrate

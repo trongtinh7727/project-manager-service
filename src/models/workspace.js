@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    author: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   });
 
   Workspace.associate = (models) => {
