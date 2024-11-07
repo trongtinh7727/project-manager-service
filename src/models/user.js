@@ -11,9 +11,26 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true, 
+    },
     password: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    confirmToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    isConfirmed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    role: {
+      type: DataTypes.ENUM('free_user', 'premium_user'),
       allowNull: false,
+      defaultValue: 'free_user',
     },
   });
 

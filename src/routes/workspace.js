@@ -1,9 +1,9 @@
 const express = require('express');
 const workspaceController = require('../controllers/workspaceController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authentication, restrictTo } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-router.use(authMiddleware);
+router.use(authentication);
 router.post('/create', workspaceController.createWorkspace);
 router.post('/:workspaceId/add-member', workspaceController.addMember);
 
