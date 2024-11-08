@@ -8,6 +8,7 @@ router.post('/create', workspaceController.createWorkspace);
 router.post('/:workspaceId/add-member', workspaceController.addMembers);
 
 router.get('/:workspaceId/users', workspaceController.getAllUsers);
+router.get('/:workspaceId/tasks', workspaceController.getTasksByWorkspace);
 router.delete('/:workspaceId', workspaceController.deleteWorkspace);
 
 module.exports = router;

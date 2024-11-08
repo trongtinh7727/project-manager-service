@@ -103,4 +103,27 @@ const deleteWorkspace = catchAsync(async (req, res) => {
   ResponseHandler.success(res, 'Workspace deleted successfully');
 });
 
-module.exports = { createWorkspace, addMembers, getAllUsers, deleteUser, deleteWorkspace };
+const getTasksByWorkspace = catchAsync(async (req, res) => {
+  const { workspaceId } = req.params;
+
+  const tasks = await db.Task.findAll({
+    where: { workspaceId },
+    include: [
+      {
+        model: db.Workspace,
+        as: 'workspace',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: db.User,
+        as: 'users',
+        attributes: ['id', 'username'],
+        through: { attributes: [] },
+      },
+    ],
+  });
+
+  res.status(200).json(tasks);
+});
+
+module.exports = { createWorkspace, addMembers, getAllUsers, deleteUser, deleteWorkspace, getTasksByWorkspace };

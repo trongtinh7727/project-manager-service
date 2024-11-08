@@ -19,7 +19,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
-    timestamps: true,
+    workspaceId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
   });
 
   Task.associate = (models) => {

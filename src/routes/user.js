@@ -6,5 +6,6 @@ const router = express.Router();
 router.use(authentication);
 
 router.get('/:userId/workspaces', userController.getAllWorkspaces);
+router.get('/:userId/tasks', userController.getAllTasks);
 
 module.exports = router;
