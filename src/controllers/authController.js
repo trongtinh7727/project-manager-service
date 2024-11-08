@@ -78,9 +78,14 @@ const login = catchAsync(async (req, res, next) => {
     return ResponseHandler.error(res, 'Invalid email or password')
   }
 
+  const { id, username, email: userEmail, isConfirmed, role, } = user;
+  const userData = { id, username, email: userEmail, isConfirmed, role, };
+
+
   // Generate token and send response
   const token = generateToken(user.id);
-  return ResponseHandler.success(res, 'Login successfully!', token)
+  user.password = null;
+  return ResponseHandler.success(res, 'Login successfully!', { userData, token })
 });
 
 // Authentication middleware to verify the JWT token

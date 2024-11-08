@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const session = require('express-session');
 const globalErrorHandler = require('./middleware/errorHandler');
 const catchAsync = require('./utils/catchAsync');
@@ -13,7 +14,15 @@ const taskRoutes = require('./routes/task');
 const healthRoutes = require('./routes/health')
 const userRoute = require('./routes/user')
 
+const corsOptions = {
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
 const app = express();
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(session({
   secret: process.env.JWT_SECRET, 
