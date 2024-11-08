@@ -24,12 +24,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            expect <<EOF
-            spawn sudo su
-            expect "password for ${{ secrets.SERVER_USER }}:"
-            send "${{ secrets.SERVER_PASSWORD }}\r"
-            expect "#"
-            EOF
             cd /home/tinhne/project-manager-service 
             git pull
             docker-compose down
