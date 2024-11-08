@@ -20,4 +20,21 @@ const getAllWorkspaces = catchAsync(async (req, res) => {
     ResponseHandler.success(res, 'Workspaces retrieved successfully', workspaces);
 });
 
-module.exports = {getAllWorkspaces}
+const getAllTasks = catchAsync(async (req, res) => {
+    const user = await db.User.findByPk(req.params.userId, {
+        include: {
+            model: db.Task,
+            as: 'tasks',
+            attributes: ['id', 'title', 'description', 'status', 'dueDate', 'workspaceId'],
+        },
+    });
+
+    if (!user) {
+        return ResponseHandler.error(res, 'User not found', 404);
+    }
+
+    const tasks = user.tasks;
+    ResponseHandler.success(res, 'Tasks retrieved successfully', tasks);
+});
+
+module.exports = {getAllWorkspaces, getAllTasks}
