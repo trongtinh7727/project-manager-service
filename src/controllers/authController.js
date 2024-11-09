@@ -15,6 +15,13 @@ const generateToken = (userId) => {
   });
 };
 
+// Validate token
+const validateToken = (token) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
 // Register new user
 const register = catchAsync(async (req, res) => {
   const { email, username, password } = req.body;
@@ -109,9 +116,7 @@ const authentication = catchAsync(async (req, res, next) => {
     return next(new AppError('User belonging to this token no longer exists.', 401));
   }
 
-  // Attach the user to the request object
-  req.user = user;
-  next();
+  return ResponseHandler.success(res, 'Authenticate successfully!', { userData, token })
 });
 
 // Restrict access to certain routes based on user roles (e.g., admin)

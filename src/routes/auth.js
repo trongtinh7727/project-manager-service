@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 router.post('/register', authController.register);
 router.get('/confirmEmail/:token', authController.confirmEmail);
 router.post('/login', authController.login);
+router.get('/getsCurrentUser', authController.authentication);
 
 // Google SSO
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
