@@ -90,33 +90,44 @@ const login = catchAsync(async (req, res, next) => {
 
 
   // Generate token and send response
-  const token = generateToken(user.id);
+  const accessToken = generateToken(user.id);
   user.password = null;
-  return ResponseHandler.success(res, 'Login successfully!', { userData, token })
+  return ResponseHandler.success(res, 'Login successfully!', { userData, accessToken })
 });
+
 
 // Authentication middleware to verify the JWT token
 const authentication = catchAsync(async (req, res, next) => {
   let accessToken = '';
+
+  // Check for authorization header and extract the token
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     accessToken = req.headers.authorization.split(' ')[1];
   }
 
-  // Check if the token exists
+  // If the token is missing, return an error
   if (!accessToken) {
     return next(new AppError('You are not logged in!', 401));
   }
 
-  // Verify the token
-  const decoded = jwt.verify(accessToken, process.env.JWT_SECRET_KEY);
+  try {
+    // Verify the token
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
 
-  // Find user by decoded token id
-  const user = await db.User.findByPk(decoded.id);
-  if (!user) {
-    return next(new AppError('User belonging to this token no longer exists.', 401));
+    // Find the user from the database using the decoded token's ID
+    const user = await db.User.findByPk(decoded.id);
+    if (!user) {
+      return next(new AppError('User belonging to this token no longer exists.', 401));
+    }
+
+    const { id, username, email: userEmail, isConfirmed, role, } = user;
+    const userData = { id, username, email: userEmail, isConfirmed, role, };
+
+
+    return ResponseHandler.success(res, 'Authenticate successfully!', { userData, accessToken })
+  } catch (error) {
+    return next(new AppError(error.message, 401));
   }
-
-  return ResponseHandler.success(res, 'Authenticate successfully!', { userData, token })
 });
 
 // Restrict access to certain routes based on user roles (e.g., admin)
