@@ -103,6 +103,31 @@ const deleteWorkspace = catchAsync(async (req, res) => {
   ResponseHandler.success(res, 'Workspace deleted successfully');
 });
 
+const getWorkspace = catchAsync(async (req, res) => {
+  const { workspaceId } = req.params;
+
+  // Find the workspace by ID
+  const workspace = await db.Workspace.findByPk(workspaceId);
+
+  if (!workspace) {
+    return ResponseHandler.error(res, 'Workspace not found', 404);
+  }
+
+  const tasks = await db.Task.findAll({
+    where: { workspaceId },
+    include: [
+      {
+        model: db.User,
+        as: 'users',
+        attributes: ['id', 'username'],
+        through: { attributes: [] },
+      },
+    ],
+  });
+
+  ResponseHandler.success(res, 'successfully', { workspace, tasks });
+});
+
 const getTasksByWorkspace = catchAsync(async (req, res) => {
   const { workspaceId } = req.params;
 
@@ -126,4 +151,4 @@ const getTasksByWorkspace = catchAsync(async (req, res) => {
   res.status(200).json(tasks);
 });
 
-module.exports = { createWorkspace, addMembers, getAllUsers, deleteUser, deleteWorkspace, getTasksByWorkspace };
+module.exports = { createWorkspace, addMembers, getAllUsers, deleteUser, deleteWorkspace, getWorkspace, getTasksByWorkspace };
